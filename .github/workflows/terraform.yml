@@ -85,12 +85,14 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
+        env:
+          TF_VAR_vpc_cidr: "10.0.0.0/16"
       
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
       - run: |
-          echo "steps.plan.outcome :${{ toJson(steps.plan)}}"
+          echo "steps.plan.outcome :${{ toJson(steps.plan) }}"
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -98,6 +100,6 @@ jobs:
       - run:  |
           pwd
           ls  -ltra
-      - run: echo "steps :${{ toJson(steps)}}"
-      - run: echo "github.ref :${{github.ref}}"
-      - run: echo "github.event_name :${{github.event_name}}"
+      - run: echo "steps :${{ toJson(steps) }}"
+      - run: echo "github.ref :${{ github.ref }}"
+      - run: echo "github.event_name :${{ github.event_name }}"
