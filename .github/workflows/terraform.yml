@@ -26,6 +26,13 @@ jobs:
         working-directory: tr_src
 
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-data
+          run-id: ${{ github.event.workflow_run.id }} # Download from specific A run
+      - run: echo "Deploying..."
+      
       - name: Checkout
         uses: actions/checkout@v2
 
