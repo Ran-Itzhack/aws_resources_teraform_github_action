@@ -53,8 +53,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::937325632884:role/github-actions-oidc-role # ${{ secrets.AWS_ROLE }}  arn:aws:iam::123456789012:role/GitHubActionRole
-          aws-region: us-east-2 # ${{ secrets.AWS_REGION }}  us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE }} #   e
+          aws-region: ${{ secrets.AWS_REGION }} #   us-east-1
           # role-session-name: GitHub-OIDC-TERRAFORM
       
       # Establish a Terraform
@@ -97,10 +97,10 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
-      - run: tree .
       - run:  |
           pwd
           ls  -ltra
       - run: echo "Terraform status steps :${{ toJson(steps) }}"
-      - name: List files in the repository
+
+      - name: List files in the repository (tree)
         run: tree .
