@@ -20,3 +20,10 @@ jobs:
       - name: Run deployment
         run: echo "The tests passed. Starting deployment... ${{toJSON(github.event)}}"
       # ... other deployment steps
+
+      - name: Upload Build Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-data
+          path: . # This uploads EVERYTHING in the current directory. 
+                  # Change this to a specific folder (like 'dist/') if you only need certain files.

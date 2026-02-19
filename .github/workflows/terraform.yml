@@ -31,6 +31,12 @@ jobs:
         with:
           name: build-data
           run-id: ${{ github.event.workflow_run.id }} # Download from specific A run
+          # This tells GitHub to look at the specific CI run that just finished
+          github-token: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Verify files
+        run: ls -R # This will show you exactly what was downloaded
+        
       - run: echo "Deploying..."
 
       - name: Checkout
