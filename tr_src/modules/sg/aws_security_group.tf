@@ -1,10 +1,9 @@
 resource "aws_security_group" "allow_ssh_http_https_terraform" {
   
- 
   vpc_id = var.vpc_id
   name        = "security-group-using-terraform"
   description = "security group using terraform"
-  
+
   tags = {
     Name = "TF_SG"
   }

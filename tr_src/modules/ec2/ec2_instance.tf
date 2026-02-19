@@ -1,11 +1,11 @@
 /*
 
 Component:
-- VPC, like "house": (10.0.0.0/16),The boundary of your private network. ,AWS Cloud
-- Internet Gateway, "front door": The bridge between your VPC and the Public Internet. ,Attached to VPC
-- Public Subnet, "room": A subset of the VPC IP range (10.0.101.0/24). ,Resides inside VPC
-- Route Table, "pathway": "The ""GPS"" that directs traffic from 0.0.0.0/0 to the IGW." ,Linked to VPC
-- RT Association,The glue that applies the routing rules to your specific subnet. ,Connects Subnet to RT
+- VPC, like "house": (10.0.0.0/16),The boundary of your private network. AWS Cloud
+- Internet Gateway, like "front door": The bridge between your VPC and the Public Internet. Attached to VPC
+- Public Subnet, like "room": A subset of the VPC IP range (10.0.101.0/24). Resides inside VPC
+- Route Table, like "pathway": "The ""GPS"" that directs traffic from 0.0.0.0/0 to the IGW." Linked to VPC
+- RT Association,The glue that applies the routing rules to your specific subnet. Connects Subnet to RT
 
 */
 
@@ -76,36 +76,5 @@ resource "aws_route_table_association" "terraform_rta_public" {
 
 output "ec2_ip_address" {
   value = aws_instance.ubuntu_ec2_instance_terraform.public_ip
-}
-
-# Output the Public IPs
-/* output "ubuntu_instance_public_ip" {
-  value = aws_instance.ubuntu_instance.public_ip
-}
-
-# Output VPC CIDR Block
-output "vpc_cidr_block" {
-  value = data.aws_vpc.default.cidr_block
-  description = "The CIDR block of the default VPC"
-}
-
-# Output Subnet CIDR Block
-output "subnet_cidr_block" {
-  value = data.aws_subnet.default.cidr_block
-  description = "The CIDR block of the default subnet"
-} */
-
-
-resource "null_resource" "create_file_localy" {
-  provisioner "local-exec" {
-
-    # command = "echo 'Automate AWS Infra Deployment ${join(", ", data.aws_subnets.example.ids)} using Terraform...' > hello.txt"
-    # command = "echo -e 'Automate AWS Infra Deployment\n${join(", ", data.aws_subnets.example.ids)}\nusing Terraform and GitHub Actions Workflows' > hello.txt"
-    command = <<EOT
-                  echo 'Target Region: ${data.aws_region.current.id} \n
-  Target ec2_ip_address: ${aws_instance.ubuntu_ec2_instance_terraform.public_ip}\n' > aws_provision_info.txt
-                  echo 'Target ec2_ip_address: ${aws_instance.ubuntu_ec2_instance_terraform.public_ip}' > ec2_ip_address.txt
-              EOT
-  }
 }
 
