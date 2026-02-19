@@ -1,52 +1,3 @@
-# Create the EC2 Instance using the data source ID
-resource "aws_instance" "ubuntu_ec2_instance_terraform" {
-
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
-  subnet_id                   = aws_subnet.tf_subnet_public.id
-  vpc_security_group_ids      = [aws_security_group.allow_ssh_http_https_terraform.id]
-  associate_public_ip_address = true
-  
-  tags = {
-    Name = "aws-ec2-instance-terraform"
-  }
-
-  user_data = file("${path.module}/setup_nginx.sh")
-}
-
-
-# resource "aws_key_pair" "ssh-key" {
-#   key_name   = "ssh-key"
-#   public_key = var.ssh_public_key
-# }
- 
-# resource "aws_instance" "my_app" {
-#   ami                         = var.instance_ami
-#   instance_type               = var.instance_type
-#   availability_zone           = var.availability_zone
-#   security_groups             = [aws_security_group.my_app.id]
-#   associate_public_ip_address = true
-#   subnet_id                   = aws_subnet.my_app.id
- 
-#   key_name = "ssh-key"
- 
-#   ### Install Docker
-#   user_data = <<-EOF
-#   #!/bin/bash
-#   sudo update -y
-#   curl -fsSL https://get.docker.com -o get-docker.sh
-#   sudo sh get-docker.sh
-#   sudo groupadd docker
-#   sudo usermod -aG docker ubuntu
-#   newgrp docker
-#   sudo timedatectl set-timezone America/New_York
-#   EOF
- 
-#   tags = {
-#     Name = "my_app_API"
-#   }
-# }
-
 /*
 
 Component:
@@ -57,18 +8,24 @@ Component:
 - RT Association,The glue that applies the routing rules to your specific subnet. ,Connects Subnet to RT
 
 */
-# resource "aws_vpc" "terraform_vpc" {
-#   cidr_block = "10.0.0.0/16"
-#   enable_dns_hostnames = true
-#   enable_dns_support   = true
 
-#   tags = {
-#     Name  = "tf_vpc"
-#     Environment = "TF_development_VPC"
-#     Owner = "Tatek-Itzhak"
-#     Department = "Web Application"
-#   }
-# }
+
+# Create the EC2 Instance using the data source ID
+resource "aws_instance" "ubuntu_ec2_instance_terraform" {
+
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  subnet_id                   = aws_subnet.tf_subnet_public.id
+  vpc_security_group_ids      = [var.sg_id]
+  associate_public_ip_address = true
+  
+  tags = {
+    Name = "aws-ec2-instance-terraform"
+  }
+
+  user_data = file("${path.module}/setup_nginx.sh")
+}
+
 
 # Define the Internet Gateway resource and attach it to the VPC
 resource "aws_internet_gateway" "terraform_gw" {
@@ -116,53 +73,6 @@ resource "aws_route_table_association" "terraform_rta_public" {
   route_table_id = aws_route_table.terraform_rt_public.id
 }
 
-resource "aws_security_group" "allow_ssh_http_https_terraform" {
-  
-  #   vpc_id      = "vpc-0d096b2c1d33a1aba"
-  # vpc_id = data.aws_vpc.vpc.id
-  vpc_id = var.vpc_id
-  name        = "security-group-using-terraform"
-  description = "security group using terraform"
-  tags = {
-    Name = "TF_SG"
-  }
-
-  ingress {
-    description      = "Allow HTTPS TCP connections"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    description      = "Allow HTTP TCP connections"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    description      = "Allow SSH connections"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  egress {
-    description      = "Allow Public connections"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-}
 
 output "ec2_ip_address" {
   value = aws_instance.ubuntu_ec2_instance_terraform.public_ip

@@ -1,0 +1,3 @@
+ account_id: {"account_id":"937325632884","arn":"arn:aws:iam::937325632884:user/tatek","id":"937325632884","user_id":"AIDA5UPHWDV2AITFCQZ7E"}
+
+                  caller_arn: arn:aws:iam::937325632884:user/tatek\ caller_user: AIDA5UPHWDV2AITFCQZ7E

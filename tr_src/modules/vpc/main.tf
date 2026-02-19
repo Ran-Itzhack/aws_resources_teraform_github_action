@@ -7,24 +7,11 @@ Component:
 - RT Association,The glue that applies the routing rules to your specific subnet. ,Connects Subnet to RT
 */
 
-# resource "aws_vpc" "terraform_vpc" {
-#   cidr_block = var.vpc_cidr
-#   enable_dns_hostnames = true
-#   enable_dns_support   = true
-#   instance_tenancy = "default"
-
-#   tags = {
-#     Name  = "tf_vpc"
-#     Environment = "TF_development_VPC"
-#     Owner = "Tatek-Itzhak"
-#     Department = "Web Application"
-#   }
-# }
-
 resource "aws_vpc" "terraform_vpc" {
   cidr_block           = var.vpc_cidr # Use the variable declared in Step 2
   enable_dns_hostnames = true
   enable_dns_support   = true
+  #   instance_tenancy = "default"
 
   tags = {
     Name        = "tf_vpc"

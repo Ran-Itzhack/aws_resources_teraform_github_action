@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.0"
+      version = "~> 5.0"
     }
   }
 
@@ -26,11 +26,30 @@ provider "aws" {
 
 module "vpc" {
   source   = "./modules/vpc"
-  vpc_cidr = var.vpc_cidr 
-  
+  vpc_cidr = var.vpc_cidr
+}
+
+module "sg" {
+  source = "./modules/sg"
+  vpc_id = module.vpc.vpc_id
 }
 
 module "ec2" {
   source = "./modules/ec2"
   vpc_id = module.vpc.vpc_id
+  sg_id = module.sg.security_group_id # Pass the output from the SG module into the EC2 variable
+}
+
+
+data "aws_caller_identity" "current" {}
+
+resource "null_resource" "create_file_localy" {
+  provisioner "local-exec" {
+
+    # command = "echo 'Automate AWS Infra Deployment ${join(", ", data.aws_subnets.example.ids)} using Terraform...' > hello.txt"
+    # command = "echo -e 'Automate AWS Infra Deployment\n${join(", ", data.aws_subnets.example.ids)}\nusing Terraform and GitHub Actions Workflows' > hello.txt"
+    command = <<EOT
+                  echo 'AWS User Account Info : ${ jsonencode(data.aws_caller_identity.current) }\n' > aws_user_account_info.txt
+                EOT
+  }
 }
