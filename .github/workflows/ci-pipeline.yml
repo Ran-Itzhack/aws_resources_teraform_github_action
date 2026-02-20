@@ -14,15 +14,13 @@ jobs:
     # Only run if Build succeeded
     # Use a condition to ensure the job runs only if the prior workflow succeeded
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Deploy application
-        run: echo "Deployment started after successful CI run"
-        # Additional steps to download artifacts from the previous workflow go here
-      - name: Run deployment
-        run: echo "The tests passed. Starting deployment... ${{toJSON(github.event)}}"
-      # ... other deployment steps
+      - name: Build Application
+        run: |
+          echo "Building... (simulating build output)"
+          echo "This is some data" > build_output.txt
 
       - name: Upload Build Data
         uses: actions/upload-artifact@v4

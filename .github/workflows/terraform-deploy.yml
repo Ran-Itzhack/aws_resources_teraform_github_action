@@ -15,6 +15,8 @@ on:
 jobs:
  
   terraform:
+    # Only run if the CI pipeline actually succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Set up AWS through Terraform
     runs-on: ubuntu-latest
     permissions:
@@ -26,21 +28,27 @@ jobs:
         working-directory: tr_src
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-data
-          run-id: ${{ github.event.workflow_run.id }} # Download from specific A run
+          # This ID ensures you get/Download data from the specific CI run that triggered
+          run-id: ${{ github.event.workflow_run.id }} 
           # This tells GitHub to look at the specific CI run that just finished
           github-token: ${{ secrets.GITHUB_TOKEN }} 
+          # Path ensures the data lands inside your terraform directory
+          path: tr_src/
 
       - name: Check files artifact downloaded
         run: ls -R # This will show you exactly what was downloaded
 
       - run: echo "Deploying..."
 
-      - name: Checkout
-        uses: actions/checkout@v2
+      # - name: Checkout
+      #   uses: actions/checkout@v2
 
       # Establish an AWS Account
       - name: Configure AWS Credentials
@@ -68,8 +76,6 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
-        env:
-          TF_VAR_vpc_cidr: "10.0.0.0/16"
       #
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
