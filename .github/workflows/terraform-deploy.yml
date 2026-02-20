@@ -1,4 +1,4 @@
-name: terraform-setup-aws # Setup AWS resources using Terraform and GitHub Actions (JWT from GitHub's OpenID Connect)
+name: terraform-deploy-aws-resources # Setup AWS resources using Terraform and GitHub Actions (JWT from GitHub's OpenID Connect)
 
 ####
 # Getting start first Trigger Definition

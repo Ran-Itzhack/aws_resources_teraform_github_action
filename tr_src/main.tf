@@ -24,10 +24,10 @@ provider "aws" {
 }
 
 
-module "vpc" {
-  source   = "./modules/vpc"
-  vpc_cidr = var.vpc_cidr
-}
+# module "vpc" {
+#   source   = "./modules/vpc"
+#   vpc_cidr = var.vpc_cidr
+# }
 
 # module "sg" {
 #   source = "./modules/sg"
@@ -54,6 +54,8 @@ output "caller_arn" {
 output "caller_user_id" {
   value = data.aws_caller_identity.current.user_id
 }
+
+
 
 
 resource "null_resource" "create_file_localy" {

@@ -7,6 +7,11 @@ Component:
 - RT Association,The glue that applies the routing rules to your specific subnet. ,Connects Subnet to RT
 */
 
+locals {
+  # This value will change on every apply
+  current_time_apply = timestamp()
+}
+
 resource "aws_vpc" "terraform_vpc" {
   cidr_block           = var.vpc_cidr # Use the variable declared in Step 2
   enable_dns_hostnames = true
@@ -14,7 +19,7 @@ resource "aws_vpc" "terraform_vpc" {
   #   instance_tenancy = "default"
 
   tags = {
-    Name        = "tf_vpc"
+    Name        = "tf_vpc-${local.current_time_apply}"
     Environment = "TF_development_VPC"
   }
 }
