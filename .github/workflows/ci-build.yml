@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Deploy application
         run: echo "Deployment started after successful CI run"
         # Additional steps to download artifacts from the previous workflow go here
@@ -30,3 +30,4 @@ jobs:
           name: build-data
           path: . # This uploads EVERYTHING in the current directory. 
                   # Change this to a specific folder (like 'dist/') if you only need certain files.
+          if-no-files-found: error

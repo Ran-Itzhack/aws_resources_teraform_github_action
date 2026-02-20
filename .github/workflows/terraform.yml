@@ -34,7 +34,7 @@ jobs:
           # This tells GitHub to look at the specific CI run that just finished
           github-token: ${{ secrets.GITHUB_TOKEN }} 
 
-      - name: Check files
+      - name: Check files artifact downloaded
         run: ls -R # This will show you exactly what was downloaded
 
       - run: echo "Deploying..."
