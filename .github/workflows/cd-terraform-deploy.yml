@@ -122,10 +122,10 @@ jobs:
           YEAR: "${{ steps.current-time.outputs.year }}"
           DAY: "${{ steps.current-time.outputs.day }}"
         run: echo $TIME $R_TIME $F_TIME $YEAR $DAY
-        
+      - run: echo "TIME; ${{ toJson(steps.current-time.outputs)}}"
       - name: DEPLOY JOB; Deployment started after successful CI run
         run: echo "A; ${{ secrets.AWS_ROLE }}"
-      - run: echo "B;  ${{ secrets.AWS_REGION }}""
+      - run: echo "B;  ${{ secrets.AWS_REGION }}"
       - run: echo "Timestamp; ${{github.event}}"
   #     - name: Checkout Repository
   #       uses: actions/checkout@v4
