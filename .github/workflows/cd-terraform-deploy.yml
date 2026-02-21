@@ -1,4 +1,4 @@
-name: terraform-deploy-aws-resources # Setup AWS resources using Terraform and GitHub Actions (JWT from GitHub's OpenID Connect)
+name: cd-terraform-deploy-aws-resources # Setup AWS resources using Terraform and GitHub Actions (JWT from GitHub's OpenID Connect)
 
 ####
 # Getting start first Trigger Definition
@@ -92,3 +92,60 @@ jobs:
       #
       - name: List files in the repository (tree)
         run: tree .
+  
+  ##
+  # --- DEPLOY JOB: Deployment started after successful CI run ---
+  ##
+  
+  deploy:
+    name: Deploy Docker to EC2
+    needs: [ terraform ]
+    runs-on: ubuntu-latest
+    # Only run if Build succeeded
+    # Use a condition to ensure the job runs only if the prior workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD-HH
+          utcOffset: "+08:00"
+      - name: Use current time
+        env:
+          TIME: "${{ steps.current-time.outputs.time }}"
+          R_TIME: "${{ steps.current-time.outputs.readableTime }}"
+          F_TIME: "${{ steps.current-time.outputs.formattedTime }}"
+          YEAR: "${{ steps.current-time.outputs.year }}"
+          DAY: "${{ steps.current-time.outputs.day }}"
+        run: echo $TIME $R_TIME $F_TIME $YEAR $DAY
+        
+      - name: DEPLOY JOB; Deployment started after successful CI run
+        run: echo "A; ${{ secrets.AWS_ROLE }}"
+      - run: echo "B;  ${{ secrets.AWS_REGION }}""
+      - run: echo "Timestamp; ${{github.event}}"
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+
+  #     - name: Execute Remote Docker Commands via SSM
+  #       run: |
+  #         aws ssm send-command \
+  #           --document-name "AWS-RunShellScript" \
+  #           --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+  #           --parameters 'commands=[
+  #             "sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}",
+  #             "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cddemo:latest",
+  #             "sudo docker stop cddemo || true",
+  #             "sudo docker rm cddemo || true",
+  #             "sudo docker run -d --name cddemo -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/cddemo:latest"
+  #           ]' \
+  #           --comment "Deploying via GitHub Actions SSM"
